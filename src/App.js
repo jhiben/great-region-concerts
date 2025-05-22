@@ -3,11 +3,7 @@ import React, { useState, useEffect } from "react";
 function displayDate(dateString) {
   const date = new Date(dateString);
 
-  return `${date.getDate()}/${
-    date.getMonth() + 1
-  }/${date.getFullYear()} at ${date.getHours()}:${date
-    .getMinutes()
-    .toFixed(2)}`;
+  return date.toLocaleString();
 }
 
 function App() {
