@@ -12,7 +12,7 @@ public class AtelierConcertsScraper(IHttpClientFactory httpClientFactory) : ICon
         var concerts = new List<Concert>();
 
         // Fetch HTML via IHttpClientFactory and parse with AngleSharp
-        var httpClient = httpClientFactory.CreateClient();
+        var httpClient = httpClientFactory.CreateClient("scraper");
         var html = await httpClient.GetStringAsync(_baseUrl);
         var context = BrowsingContext.New(Configuration.Default);
         var document = await context.OpenAsync(req => req.Content(html));

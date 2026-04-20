@@ -13,7 +13,12 @@ builder
     .ConfigureFunctionsApplicationInsights();
 
 builder.Services.AddMemoryCache();
-builder.Services.AddHttpClient();
+builder.Services.AddHttpClient("scraper", client =>
+{
+    client.Timeout = TimeSpan.FromSeconds(10);
+    client.DefaultRequestHeaders.UserAgent.ParseAdd(
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36");
+});
 
 builder.Services.AddSingleton<IConcertsScraper, KulturfabrikConcertsScraper>();
 builder.Services.AddSingleton<IConcertsScraper, AtelierConcertsScraper>();

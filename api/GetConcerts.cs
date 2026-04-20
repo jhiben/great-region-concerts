@@ -33,7 +33,12 @@ public class GetConcerts(
             {
                 try
                 {
-                    return await scraper.FetchConcerts();
+                    var task = scraper.FetchConcerts();
+                    if (await Task.WhenAny(task, Task.Delay(TimeSpan.FromSeconds(15))) == task)
+                        return await task;
+
+                    logger.LogWarning("Scraper {Scraper} timed out.", scraper.GetType().Name);
+                    return Enumerable.Empty<Models.Concert>();
                 }
                 catch (Exception ex)
                 {

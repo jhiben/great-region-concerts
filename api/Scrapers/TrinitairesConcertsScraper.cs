@@ -16,7 +16,7 @@ public class TrinitairesConcertsScraper(IHttpClientFactory httpClientFactory) : 
     public async Task<IEnumerable<Concert>> FetchConcerts()
     {
         var concerts = new List<Concert>();
-        var httpClient = httpClientFactory.CreateClient();
+        var httpClient = httpClientFactory.CreateClient("scraper");
 
         var page = 1;
         int totalPages;

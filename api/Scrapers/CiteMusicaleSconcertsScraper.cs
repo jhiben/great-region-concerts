@@ -41,7 +41,7 @@ public partial class CiteMusicaleSconcertsScraper(IHttpClientFactory httpClientF
     public async Task<IEnumerable<Concert>> FetchConcerts()
     {
         var concerts = new List<Concert>();
-        var httpClient = httpClientFactory.CreateClient();
+        var httpClient = httpClientFactory.CreateClient("scraper");
         var browsingContext = BrowsingContext.New(Configuration.Default);
 
         for (var page = 1; page <= _maxPages; page++)

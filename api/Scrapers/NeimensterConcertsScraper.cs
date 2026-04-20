@@ -12,7 +12,7 @@ public class NeimensterConcertsScraper(IHttpClientFactory httpClientFactory) : I
     {
         var concerts = new List<Concert>();
 
-        var httpClient = httpClientFactory.CreateClient();
+        var httpClient = httpClientFactory.CreateClient("scraper");
         var html = await httpClient.GetStringAsync(_baseUrl);
         var context = BrowsingContext.New(Configuration.Default);
         var document = await context.OpenAsync(req => req.Content(html));

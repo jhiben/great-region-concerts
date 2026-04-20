@@ -17,7 +17,7 @@ public partial class TufaTrierConcertsScraper(IHttpClientFactory httpClientFacto
     public async Task<IEnumerable<Concert>> FetchConcerts()
     {
         var concerts = new List<Concert>();
-        var httpClient = httpClientFactory.CreateClient();
+        var httpClient = httpClientFactory.CreateClient("scraper");
 
         // Fetch the calendar page which contains a JSON-LD ItemList with all event URLs
         var html = await httpClient.GetStringAsync(_baseUrl);
