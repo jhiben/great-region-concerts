@@ -95,6 +95,50 @@ body {
   gap: 2rem;
 }
 
+/* Filter bar */
+.filter-bar {
+  position: relative;
+  margin-bottom: 0.5rem;
+}
+
+.filter-input {
+  width: 100%;
+  padding: 0.7rem 2.5rem 0.7rem 1rem;
+  font-size: 0.95rem;
+  border: 2px solid #e9ecef;
+  border-radius: 10px;
+  background: #fff;
+  color: #1a1a2e;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.filter-input:focus {
+  border-color: #4361ee;
+}
+
+.filter-input::placeholder {
+  color: #adb5bd;
+}
+
+.filter-clear {
+  position: absolute;
+  right: 0.6rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  font-size: 1rem;
+  color: #6c757d;
+  cursor: pointer;
+  padding: 0.25rem;
+  line-height: 1;
+}
+
+.filter-clear:hover {
+  color: #e63946;
+}
+
 .date-heading {
   font-size: 1.25rem;
   font-weight: 600;
