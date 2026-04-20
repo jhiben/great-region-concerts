@@ -28,7 +28,7 @@ public class RockhalConcertsScraper(IHttpClientFactory httpClientFactory) : ICon
             var bandName = bandElement?.FirstChild?.TextContent.Trim();
             var genre = bandElement?.QuerySelector("span")?.TextContent.Trim();
 
-            var eventUrl = concertElement.QuerySelector("a")?.GetAttribute("href");
+            var eventUrl = concertElement.QuerySelector("a.agenda-item__link")?.GetAttribute("href");
             if (eventUrl is not null && !eventUrl.StartsWith("http"))
                 eventUrl = "https://rockhal.lu" + eventUrl;
 
