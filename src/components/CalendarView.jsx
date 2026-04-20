@@ -151,19 +151,32 @@ function CalendarView({ concertDates }) {
             })}
           </h3>
           <ul className="cal-detail-list">
-            {selectedConcerts.map((c) => (
-              <li key={c.band} className="cal-detail-item">
-                <span className="cal-detail-band">{c.band}</span>
-                <span className="cal-detail-venue">{c.venue}</span>
-                {c.genres && c.genres.length > 0 && (
-                  <div className="cal-detail-genres">
-                    {c.genres.map((g) => (
-                      <span key={g} className="genre-badge">{g}</span>
-                    ))}
-                  </div>
-                )}
-              </li>
-            ))}
+            {selectedConcerts.map((c) => {
+              const inner = (
+                <>
+                  <span className="cal-detail-band">{c.band}</span>
+                  <span className="cal-detail-venue">{c.venue}</span>
+                  {c.genres && c.genres.length > 0 && (
+                    <div className="cal-detail-genres">
+                      {c.genres.map((g) => (
+                        <span key={g} className="genre-badge">{g}</span>
+                      ))}
+                    </div>
+                  )}
+                </>
+              );
+              return c.url ? (
+                <li key={`${c.band}-${c.venue}`}>
+                  <a className="cal-detail-item cal-detail-link" href={c.url} target="_blank" rel="noopener noreferrer">
+                    {inner}
+                  </a>
+                </li>
+              ) : (
+                <li key={`${c.band}-${c.venue}`} className="cal-detail-item">
+                  {inner}
+                </li>
+              );
+            })}
           </ul>
         </div>
       )}

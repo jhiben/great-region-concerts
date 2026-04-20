@@ -162,10 +162,18 @@ body {
   border-radius: 10px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
   transition: box-shadow 0.2s;
+  display: block;
 }
 
-.concert-card:hover {
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+.concert-link {
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+}
+
+.concert-link:hover {
+  box-shadow: 0 3px 12px rgba(67, 97, 238, 0.15);
+  border-left: 3px solid #4361ee;
 }
 
 .concert-band {
@@ -440,6 +448,18 @@ body {
   padding: 0.75rem;
   background: #f8f9fa;
   border-radius: 8px;
+  transition: background 0.15s;
+}
+
+.cal-detail-link {
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+}
+
+.cal-detail-link:hover {
+  background: #edf2fb;
+  border-left: 3px solid #4361ee;
 }
 
 .cal-detail-band {

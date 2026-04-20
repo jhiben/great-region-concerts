@@ -61,6 +61,7 @@ public class GetConcerts(
                     c.Genres,
                     c.Date,
                     Venue = c.Venue.ToString(),
+                    c.Url,
                 }),
             })
             .OrderBy(g => g.Date)
