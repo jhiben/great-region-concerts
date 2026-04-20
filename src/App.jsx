@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import ConcertList from "./components/ConcertList";
+import CalendarView from "./components/CalendarView";
 import LoadingSpinner from "./components/LoadingSpinner";
 import ErrorMessage from "./components/ErrorMessage";
 
@@ -7,6 +8,7 @@ function App() {
   const [concerts, setConcerts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [view, setView] = useState("calendar");
 
   const fetchConcerts = useCallback(async () => {
     setIsLoading(true);
@@ -55,7 +57,28 @@ function App() {
 
   return (
     <div className="container">
-      <ConcertList concertDates={concerts} />
+      <header className="app-header">
+        <h1 className="app-title">🎵 Great Region Concerts</h1>
+        <div className="view-toggle">
+          <button
+            className={`toggle-btn ${view === "calendar" ? "active" : ""}`}
+            onClick={() => setView("calendar")}
+          >
+            📅 Calendar
+          </button>
+          <button
+            className={`toggle-btn ${view === "list" ? "active" : ""}`}
+            onClick={() => setView("list")}
+          >
+            📋 List
+          </button>
+        </div>
+      </header>
+      {view === "calendar" ? (
+        <CalendarView concertDates={concerts} />
+      ) : (
+        <ConcertList concertDates={concerts} />
+      )}
     </div>
   );
 }

@@ -30,17 +30,22 @@ describe('App', () => {
   });
 
   it('shows loading indicator on initial render', () => {
-    // fetch never resolves so we stay in loading state
     globalThis.fetch = vi.fn().mockReturnValue(new Promise(() => {}));
     render(<App />);
     expect(screen.getByText(/loading concerts/i)).toBeInTheDocument();
   });
 
-  it('renders concert data after successful fetch', async () => {
+  it('renders calendar view by default and can switch to list', async () => {
     mockFetchSuccess(mockConcerts);
     render(<App />);
 
-    expect(await screen.findByText('Test Band')).toBeInTheDocument();
+    // Calendar view loads by default
+    expect(await screen.findByText(/calendar/i)).toBeInTheDocument();
+
+    // Switch to list view
+    await userEvent.click(screen.getByRole('button', { name: /list/i }));
+
+    expect(screen.getByText('Test Band')).toBeInTheDocument();
     expect(screen.getByText('Another Band')).toBeInTheDocument();
     expect(screen.getByText('Rockhal')).toBeInTheDocument();
     expect(screen.getByText('Atelier')).toBeInTheDocument();
@@ -63,12 +68,12 @@ describe('App', () => {
     const retryButton = await screen.findByRole('button', { name: /retry/i });
     expect(globalThis.fetch).toHaveBeenCalledTimes(1);
 
-    // Now make fetch succeed on retry
     mockFetchSuccess(mockConcerts);
     await userEvent.click(retryButton);
 
-    expect(await screen.findByText('Test Band')).toBeInTheDocument();
-    expect(globalThis.fetch).toHaveBeenCalledTimes(1); // new mock, called once
+    // After retry, calendar view should render with header
+    expect(await screen.findByText(/Great Region Concerts/i)).toBeInTheDocument();
+    expect(globalThis.fetch).toHaveBeenCalledTimes(1);
   });
 
   it('shows empty state when fetch returns no concerts', async () => {
