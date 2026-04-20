@@ -12,6 +12,9 @@ builder
     .Services.AddApplicationInsightsTelemetryWorkerService()
     .ConfigureFunctionsApplicationInsights();
 
+builder.Services.AddMemoryCache();
+builder.Services.AddHttpClient();
+
 builder.Services.AddSingleton<IConcertsScraper, KulturfabrikConcertsScraper>();
 builder.Services.AddSingleton<IConcertsScraper, AtelierConcertsScraper>();
 builder.Services.AddSingleton<IConcertsScraper, RockhalConcertsScraper>();

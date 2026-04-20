@@ -3,7 +3,7 @@ using Api.Models;
 
 namespace Api.Scrapers;
 
-public class KulturfabrikConcertsScraper : IConcertsScraper
+public class KulturfabrikConcertsScraper(IHttpClientFactory httpClientFactory) : IConcertsScraper
 {
     private const string _baseUrl = "https://kulturfabrik.lu/events";
 
@@ -11,12 +11,11 @@ public class KulturfabrikConcertsScraper : IConcertsScraper
     {
         var concerts = new List<Concert>();
 
-        // Configure AngleSharp
-        var config = Configuration.Default.WithDefaultLoader();
-        var context = BrowsingContext.New(config);
-
-        // Load the website
-        var document = await context.OpenAsync(_baseUrl);
+        // Fetch HTML via IHttpClientFactory and parse with AngleSharp
+        var httpClient = httpClientFactory.CreateClient();
+        var html = await httpClient.GetStringAsync(_baseUrl);
+        var context = BrowsingContext.New(Configuration.Default);
+        var document = await context.OpenAsync(req => req.Content(html));
 
         // Select the elements containing concert information
         var concertElements = document.QuerySelectorAll(".list-item");
@@ -55,7 +54,7 @@ public class KulturfabrikConcertsScraper : IConcertsScraper
                     {
                         Genres =
                             genres
-                                ?.Where(g => g.ToLowerInvariant() is not "musique" or "music")
+                                ?.Where(g => g.ToLowerInvariant() is not "musique" and not "music")
                                 .ToArray() ?? [],
                     }
                 );
@@ -65,34 +64,35 @@ public class KulturfabrikConcertsScraper : IConcertsScraper
         return concerts;
     }
 
-    private static bool TryParseDate(string dateString, out DateTime dateTime)
+    internal static bool TryParseDate(string dateString, out DateTime dateTime)
     {
         dateTime = default;
-        try
-        {
-            // Example: "Wed 21.05.25 — 19h00"
-            var parts = dateString.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-            if (parts.Length < 3)
-                return false;
 
-            var dateParts = parts[1].Split('.');
-            if (dateParts.Length != 3)
-                return false;
-
-            int day = int.Parse(dateParts[0]);
-            int month = int.Parse(dateParts[1]);
-            int year = 2000 + int.Parse(dateParts[2]); // "25" -> 2025
-
-            var timeParts = parts[3].Split('h');
-            int hour = int.Parse(timeParts[0]);
-            int minute = int.Parse(timeParts[1]);
-
-            dateTime = new DateTime(year, month, day, hour, minute, 0);
-            return true;
-        }
-        catch
-        {
+        // Example: "Wed 21.05.25 — 19h00"
+        var parts = dateString.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        if (parts.Length < 4)
             return false;
-        }
+
+        var dateParts = parts[1].Split('.');
+        if (dateParts.Length != 3)
+            return false;
+
+        if (!int.TryParse(dateParts[0], out int day)
+            || !int.TryParse(dateParts[1], out int month)
+            || !int.TryParse(dateParts[2], out int yearShort))
+            return false;
+
+        int year = 2000 + yearShort; // "25" -> 2025
+
+        var timeParts = parts[3].Split('h');
+        if (timeParts.Length != 2)
+            return false;
+
+        if (!int.TryParse(timeParts[0], out int hour)
+            || !int.TryParse(timeParts[1], out int minute))
+            return false;
+
+        dateTime = new DateTime(year, month, day, hour, minute, 0);
+        return true;
     }
 }

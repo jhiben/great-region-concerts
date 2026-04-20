@@ -3,21 +3,19 @@ using Api.Models;
 
 namespace Api.Scrapers;
 
-
-public class AtelierConcertsScraper : IConcertsScraper
+public class AtelierConcertsScraper(IHttpClientFactory httpClientFactory) : IConcertsScraper
 {
-    private const string _baseUrl = "https://www.atelier.lu/#agenda"; // Adjust the URL as needed
+    private const string _baseUrl = "https://www.atelier.lu/#agenda";
 
     public async Task<IEnumerable<Concert>> FetchConcerts()
     {
         var concerts = new List<Concert>();
 
-        // Configure AngleSharp
-        var config = Configuration.Default.WithDefaultLoader();
-        var context = BrowsingContext.New(config);
-
-        // Load the website
-        var document = await context.OpenAsync(_baseUrl);
+        // Fetch HTML via IHttpClientFactory and parse with AngleSharp
+        var httpClient = httpClientFactory.CreateClient();
+        var html = await httpClient.GetStringAsync(_baseUrl);
+        var context = BrowsingContext.New(Configuration.Default);
+        var document = await context.OpenAsync(req => req.Content(html));
 
         // Select the elements containing concert information
         var concertElements = document.QuerySelectorAll("[itemtype='http://schema.org/Event']"); // Adjust selector based on the website's structure

@@ -5,20 +5,19 @@ using Api.Models;
 
 namespace Api.Scrapers;
 
-public class RockhalConcertsScraper : IConcertsScraper
+public class RockhalConcertsScraper(IHttpClientFactory httpClientFactory) : IConcertsScraper
 {
-    private const string _baseUrl = "https://rockhal.lu/agenda-en/"; // Adjust the URL as needed
+    private const string _baseUrl = "https://rockhal.lu/agenda-en/";
 
     public async Task<IEnumerable<Concert>> FetchConcerts()
     {
         var concerts = new List<Concert>();
 
-        // Configure AngleSharp
-        var config = Configuration.Default.WithDefaultLoader();
-        var context = BrowsingContext.New(config);
-
-        // Load the website
-        var document = await context.OpenAsync(_baseUrl);
+        // Fetch HTML via IHttpClientFactory and parse with AngleSharp
+        var httpClient = httpClientFactory.CreateClient();
+        var html = await httpClient.GetStringAsync(_baseUrl);
+        var context = BrowsingContext.New(Configuration.Default);
+        var document = await context.OpenAsync(req => req.Content(html));
 
         // Select the elements containing concert information
         var concertElements = document.QuerySelectorAll(".agenda-item"); // Adjust selector based on the website's structure
@@ -58,30 +57,34 @@ public class RockhalConcertsScraper : IConcertsScraper
         return concerts;
     }
 
-    private static bool TryParseDate(string dateString, [NotNullWhen(true)] out DateTime? dateTime)
+    internal static bool TryParseDate(string dateString, [NotNullWhen(true)] out DateTime? dateTime)
     {
         dateTime = null;
 
-        try
-        {
-            var parts = dateString.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-            var dayOfWeek = parts[0]; // e.g., "Wed"
-            var day = int.Parse(parts[1]); // e.g., "16"
-            var month =
-                DateTimeFormatInfo.InvariantInfo.AbbreviatedMonthNames.ToList().IndexOf(parts[2])
-                + 1; // Convert "Apr" to 4
-            var year = int.Parse(parts[3]); // e.g., "2025"
-            var timeParts = parts[5].Split(':'); // e.g., "20:00"
-            var hour = int.Parse(timeParts[0]);
-            var minute = int.Parse(timeParts[1]);
-
-            dateTime = new DateTime(year, month, day, hour, minute, 0);
-
-            return true;
-        }
-        catch (Exception)
-        {
+        var parts = dateString.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        if (parts.Length < 6)
             return false;
-        }
+
+        if (!int.TryParse(parts[1], out int day))
+            return false;
+
+        var month =
+            DateTimeFormatInfo.InvariantInfo.AbbreviatedMonthNames.ToList().IndexOf(parts[2]) + 1;
+        if (month <= 0)
+            return false;
+
+        if (!int.TryParse(parts[3], out int year))
+            return false;
+
+        var timeParts = parts[5].Split(':');
+        if (timeParts.Length != 2)
+            return false;
+
+        if (!int.TryParse(timeParts[0], out int hour)
+            || !int.TryParse(timeParts[1], out int minute))
+            return false;
+
+        dateTime = new DateTime(year, month, day, hour, minute, 0);
+        return true;
     }
 }
