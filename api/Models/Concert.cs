@@ -40,11 +40,11 @@ public static class Venues
     public static readonly Venue EuropahalleTrier = new("Europahalle", "Trier", "Germany", "https://www.europahalle-trier.de");
     public static readonly Venue Saarlandhalle = new("Saarlandhalle", "Saarbrücken", "Germany", "https://www.saarlandhalle.de");
 
-    // France
-    public static readonly Venue Trinitaires = new("Les Trinitaires", "Metz", "France", "https://www.maisontrinitaires.com");
-    public static readonly Venue Arsenal = new("Arsenal", "Metz", "France", "https://www.arsenal-metz.fr");
+    // France — Cité musicale-Metz (Arsenal, Trinitaires, BAM under one org)
+    public static readonly Venue Trinitaires = new("Les Trinitaires", "Metz", "France", "https://www.citemusicale-metz.fr");
+    public static readonly Venue Arsenal = new("Arsenal", "Metz", "France", "https://www.citemusicale-metz.fr");
+    public static readonly Venue BAM = new("BAM", "Metz", "France", "https://www.citemusicale-metz.fr");
 
     // Belgium
-    public static readonly Venue ForumLiege = new("Le Forum", "Liège", "Belgium", "https://www.forumliege.be");
-    public static readonly Venue ReflektorLiege = new("Le Reflektor", "Liège", "Belgium", "https://www.lereflektor.be");
+    public static readonly Venue ReflektorLiege = new("Reflektor", "Liège", "Belgium", "https://reflektor.be");
 }

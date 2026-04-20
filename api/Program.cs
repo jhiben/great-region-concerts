@@ -24,6 +24,8 @@ builder.Services.AddSingleton<IConcertsScraper, Casino2000ConcertsScraper>();
 builder.Services.AddSingleton<IConcertsScraper, TrifolionConcertsScraper>();
 builder.Services.AddSingleton<IConcertsScraper, TufaTrierConcertsScraper>();
 builder.Services.AddSingleton<IConcertsScraper, EuropahalleConcertsScraper>();
-builder.Services.AddSingleton<IConcertsScraper, TrinitairesConcertsScraper>();
+builder.Services.AddSingleton<IConcertsScraper, CiteMusicaleSconcertsScraper>();
+builder.Services.AddSingleton<IConcertsScraper, OpderschmelzConcertsScraper>();
+builder.Services.AddSingleton<IConcertsScraper, ReflektorConcertsScraper>();
 
 builder.Build().Run();
