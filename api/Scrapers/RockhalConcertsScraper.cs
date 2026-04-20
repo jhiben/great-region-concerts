@@ -42,7 +42,7 @@ public class RockhalConcertsScraper(IHttpClientFactory httpClientFactory) : ICon
                     new Concert(
                         bandName,
                         new DateTimeOffset(parsedDate.Value, TimeSpan.Zero),
-                        Venue.Rockhal
+                        Venues.Rockhal
                     )
                     {
                         Genres = genre

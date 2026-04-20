@@ -37,7 +37,7 @@ public class AtelierConcertsScraper(IHttpClientFactory httpClientFactory) : ICon
 
             if (!string.IsNullOrEmpty(bandName) && date is not null)
             {
-                concerts.Add(new Concert(bandName, date.Value, Venue.Atelier));
+                concerts.Add(new Concert(bandName, date.Value, Venues.Atelier));
             }
         }
 

@@ -50,7 +50,7 @@ public class KulturfabrikConcertsScraper(IHttpClientFactory httpClientFactory) :
             )
             {
                 concerts.Add(
-                    new Concert(bandName, new(date, TimeSpan.Zero), Venue.Kulturfabrik)
+                    new Concert(bandName, new(date, TimeSpan.Zero), Venues.Kulturfabrik)
                     {
                         Genres =
                             genres
