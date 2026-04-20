@@ -24,6 +24,10 @@ public class Casino2000ConcertsScraper(IHttpClientFactory httpClientFactory) : I
         {
             var bandName = wrapper.QuerySelector("h1")?.TextContent.Trim();
 
+            var eventUrl = wrapper.QuerySelector("a")?.GetAttribute("href");
+            if (eventUrl is not null && !eventUrl.StartsWith("http"))
+                eventUrl = "https://casino2000.lu" + eventUrl;
+
             var dateCell = wrapper.QuerySelector("td");
             var dateText = dateCell?.TextContent.Trim()
                 .Split('\n', StringSplitOptions.RemoveEmptyEntries)
@@ -48,6 +52,9 @@ public class Casino2000ConcertsScraper(IHttpClientFactory httpClientFactory) : I
                         new DateTimeOffset(parsedDate, TimeSpan.Zero),
                         Venues.Casino2000
                     )
+                    {
+                        Url = eventUrl,
+                    }
                 );
             }
         }

@@ -25,6 +25,10 @@ public partial class TrifolionConcertsScraper(IHttpClientFactory httpClientFacto
         {
             var bandName = eventLink.QuerySelector("h3")?.TextContent.Trim();
 
+            var eventUrl = eventLink.GetAttribute("href");
+            if (eventUrl is not null && !eventUrl.StartsWith("http"))
+                eventUrl = "https://www.trifolion.lu" + eventUrl;
+
             // Date is in a div with "uppercase" class containing a pattern like "Mittwoch 22.04.2026"
             var dateText = ExtractDateText(eventLink.TextContent);
 
@@ -35,7 +39,7 @@ public partial class TrifolionConcertsScraper(IHttpClientFactory httpClientFacto
 
             if (!string.IsNullOrEmpty(bandName) && date is not null)
             {
-                concerts.Add(new Concert(bandName, date.Value, Venues.Trifolion));
+                concerts.Add(new Concert(bandName, date.Value, Venues.Trifolion) { Url = eventUrl });
             }
         }
 

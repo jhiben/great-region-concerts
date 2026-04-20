@@ -27,6 +27,11 @@ public class AtelierConcertsScraper(IHttpClientFactory httpClientFactory) : ICon
                 ?.GetAttribute("content")
                 ?.Trim();
 
+            var eventUrl = concertElement
+                .QuerySelector("a[itemprop='url']")
+                ?.GetAttribute("href")
+                ?? concertElement.QuerySelector("a")?.GetAttribute("href");
+
             // Extract date
             var dateString = concertElement
                 .QuerySelector("meta[itemprop='startDate']")
@@ -37,7 +42,7 @@ public class AtelierConcertsScraper(IHttpClientFactory httpClientFactory) : ICon
 
             if (!string.IsNullOrEmpty(bandName) && date is not null)
             {
-                concerts.Add(new Concert(bandName, date.Value, Venues.Atelier));
+                concerts.Add(new Concert(bandName, date.Value, Venues.Atelier) { Url = eventUrl });
             }
         }
 

@@ -41,7 +41,7 @@ public class NeimensterConcertsScraper(IHttpClientFactory httpClientFactory) : I
 
                 foreach (var script in ldJsonScripts)
                 {
-                    var concert = TryParseEventFromJsonLd(script.TextContent, eventName);
+                    var concert = TryParseEventFromJsonLd(script.TextContent, eventName, eventUrl);
                     if (concert is not null)
                     {
                         concerts.Add(concert);
@@ -58,7 +58,7 @@ public class NeimensterConcertsScraper(IHttpClientFactory httpClientFactory) : I
         return concerts;
     }
 
-    internal static Concert? TryParseEventFromJsonLd(string json, string fallbackName)
+    internal static Concert? TryParseEventFromJsonLd(string json, string fallbackName, string? eventUrl)
     {
         try
         {
@@ -84,7 +84,7 @@ public class NeimensterConcertsScraper(IHttpClientFactory httpClientFactory) : I
                     && DateTimeOffset.TryParse(startDateStr, out var date)
                 )
                 {
-                    return new Concert(name, date, Venues.Neimenster);
+                    return new Concert(name, date, Venues.Neimenster) { Url = eventUrl };
                 }
             }
         }

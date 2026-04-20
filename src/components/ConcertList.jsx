@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useRef, useEffect } from "react";
+import React, { useState, useMemo } from "react";
 import ConcertItem from "./ConcertItem";
 
 function formatDate(dateString) {
@@ -11,28 +11,18 @@ function formatDate(dateString) {
 
 function ConcertList({ concertDates }) {
   const [filter, setFilter] = useState("");
-  const todayRef = useRef(null);
-
-  // Scroll to today's date (or nearest future) on mount
-  useEffect(() => {
-    if (todayRef.current) {
-      todayRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
-  }, []);
 
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
-  // Find index of first group >= today
-  const todayIndex = useMemo(() => {
-    return concertDates.findIndex((g) => new Date(g.date) >= today);
-  }, [concertDates, today]);
-
   const lowerFilter = filter.toLowerCase().trim();
 
   const filteredDates = useMemo(() => {
-    if (!lowerFilter) return concertDates;
-    return concertDates
+    // Start from today — exclude past dates
+    const upcoming = concertDates.filter((g) => new Date(g.date) >= today);
+
+    if (!lowerFilter) return upcoming;
+    return upcoming
       .map((group) => {
         const matchingConcerts = group.concerts.filter((c) => {
           const text = [
@@ -49,7 +39,7 @@ function ConcertList({ concertDates }) {
         return { ...group, concerts: matchingConcerts };
       })
       .filter(Boolean);
-  }, [concertDates, lowerFilter]);
+  }, [concertDates, lowerFilter, today]);
 
   return (
     <div className="concert-list">
@@ -68,26 +58,20 @@ function ConcertList({ concertDates }) {
         )}
       </div>
       {filteredDates.length === 0 ? (
-        <p className="empty-message">No concerts match "{filter}"</p>
+        <p className="empty-message">
+          {lowerFilter ? `No concerts match "${filter}"` : "No upcoming concerts found."}
+        </p>
       ) : (
-        filteredDates.map((dates, idx) => {
-          // Find original index for todayRef
-          const origIdx = concertDates.indexOf(dates);
-          return (
-            <div
-              key={dates.date}
-              className="concert-date-group"
-              ref={!lowerFilter && origIdx === todayIndex ? todayRef : null}
-            >
-              <h2 className="date-heading">{formatDate(dates.date)}</h2>
-              <ul className="concert-items">
-                {dates.concerts.map((concert) => (
-                  <ConcertItem key={`${concert.band}-${concert.venue}`} concert={concert} />
-                ))}
-              </ul>
-            </div>
-          );
-        })
+        filteredDates.map((dates) => (
+          <div key={dates.date} className="concert-date-group">
+            <h2 className="date-heading">{formatDate(dates.date)}</h2>
+            <ul className="concert-items">
+              {dates.concerts.map((concert) => (
+                <ConcertItem key={`${concert.band}-${concert.venue}`} concert={concert} />
+              ))}
+            </ul>
+          </div>
+        ))
       )}
     </div>
   );

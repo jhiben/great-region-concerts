@@ -25,8 +25,12 @@ public class RockhalConcertsScraper(IHttpClientFactory httpClientFactory) : ICon
         foreach (var concertElement in concertElements)
         {
             var bandElement = concertElement.QuerySelector(".agenda-item__title h3.name");
-            var bandName = bandElement?.FirstChild?.TextContent.Trim(); // Adjust selector
-            var genre = bandElement?.QuerySelector("span")?.TextContent.Trim(); // Adjust selector
+            var bandName = bandElement?.FirstChild?.TextContent.Trim();
+            var genre = bandElement?.QuerySelector("span")?.TextContent.Trim();
+
+            var eventUrl = concertElement.QuerySelector("a")?.GetAttribute("href");
+            if (eventUrl is not null && !eventUrl.StartsWith("http"))
+                eventUrl = "https://rockhal.lu" + eventUrl;
 
             // Extract date
             var date = concertElement.QuerySelector(".agenda-item__date")?.TextContent.Trim();
@@ -37,7 +41,6 @@ public class RockhalConcertsScraper(IHttpClientFactory httpClientFactory) : ICon
                 && TryParseDate(date, out var parsedDate)
             )
             {
-                // Parse the date and create a Concert object
                 concerts.Add(
                     new Concert(
                         bandName,
@@ -49,6 +52,7 @@ public class RockhalConcertsScraper(IHttpClientFactory httpClientFactory) : ICon
                             ?.Split('/', StringSplitOptions.RemoveEmptyEntries)
                             .Select(g => g.Trim())
                             .ToArray(),
+                        Url = eventUrl,
                     }
                 );
             }

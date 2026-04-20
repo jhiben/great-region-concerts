@@ -40,12 +40,17 @@ public class PhilharmonieConcertsScraper(IHttpClientFactory httpClientFactory) :
                 .Where(g => !string.IsNullOrEmpty(g))
                 .ToArray();
 
+            var eventUrl = concertElement.QuerySelector("a")?.GetAttribute("href");
+            if (eventUrl is not null && !eventUrl.StartsWith("http"))
+                eventUrl = "https://www.philharmonie.lu" + eventUrl;
+
             if (!string.IsNullOrEmpty(bandName) && date is not null)
             {
                 concerts.Add(
                     new Concert(bandName, date.Value, Venues.Philharmonie)
                     {
                         Genres = genres.Length > 0 ? genres : null,
+                        Url = eventUrl,
                     }
                 );
             }

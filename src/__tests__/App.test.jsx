@@ -5,7 +5,7 @@ import App from '../App';
 
 const mockConcerts = [
   {
-    date: '2025-05-21T19:00:00+00:00',
+    date: '2030-06-15T19:00:00+00:00',
     concerts: [
       { band: 'Test Band', genres: ['Rock', 'Metal'], venue: 'Rockhal' },
       { band: 'Another Band', genres: ['Jazz'], venue: 'Atelier' },
@@ -45,7 +45,7 @@ describe('App', () => {
     // Switch to list view
     await userEvent.click(screen.getByRole('button', { name: /list/i }));
 
-    expect(screen.getByText('Test Band')).toBeInTheDocument();
+    expect(await screen.findByText('Test Band')).toBeInTheDocument();
     expect(screen.getByText('Another Band')).toBeInTheDocument();
     expect(screen.getByText('Rockhal')).toBeInTheDocument();
     expect(screen.getByText('Atelier')).toBeInTheDocument();

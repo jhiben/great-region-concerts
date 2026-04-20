@@ -40,6 +40,10 @@ public class KulturfabrikConcertsScraper(IHttpClientFactory httpClientFactory) :
 
             var bandName = concertElement.QuerySelector(".item-title")?.TextContent.Trim();
 
+            var eventUrl = concertElement.QuerySelector("a")?.GetAttribute("href");
+            if (eventUrl is not null && !eventUrl.StartsWith("http"))
+                eventUrl = "https://kulturfabrik.lu" + eventUrl;
+
             // Extract date
             var dateString = concertElement.QuerySelector(".item-date")?.TextContent.Trim();
 
@@ -56,6 +60,7 @@ public class KulturfabrikConcertsScraper(IHttpClientFactory httpClientFactory) :
                             genres
                                 ?.Where(g => g.ToLowerInvariant() is not "musique" and not "music")
                                 .ToArray() ?? [],
+                        Url = eventUrl,
                     }
                 );
             }

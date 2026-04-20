@@ -25,6 +25,10 @@ public partial class ReflektorConcertsScraper(IHttpClientFactory httpClientFacto
         {
             var bandName = element.QuerySelector("article h2 strong")?.TextContent.Trim();
 
+            var eventUrl = element.QuerySelector("a")?.GetAttribute("href");
+            if (eventUrl is not null && !eventUrl.StartsWith("http"))
+                eventUrl = "https://reflektor.be" + eventUrl;
+
             var dateText = element
                 .QuerySelector("aside.infos span:first-child")
                 ?.TextContent.Trim();
@@ -63,6 +67,9 @@ public partial class ReflektorConcertsScraper(IHttpClientFactory httpClientFacto
 
             concerts.Add(
                 new Concert(bandName, new DateTimeOffset(dateTime, TimeSpan.Zero), Venues.ReflektorLiege)
+                {
+                    Url = eventUrl,
+                }
             );
         }
 
